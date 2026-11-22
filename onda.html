@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editor de Onda SVG em Tempo Real — Ducklé</title>
+  <style>
+    :root {
+      --blue: #006BA4;
+      --cream: #F8F3EA;
+      --body-bg: #FEF9F0;
+      --orange: #E07020;
+      --panel-bg: #141923;
+      --panel-card: #1d2432;
+      --panel-border: #2e384d;
+      --text-main: #f3f6fb;
+      --text-muted: #9aa7bd;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--body-bg);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: #1f242d;
+    }
+
+    /* --- PREVIEW DO LAYOUT --- */
+    .preview-stage {
+      position: relative;
+      background-color: var(--cream);
+      border-bottom: 2px dashed rgba(0, 107, 164, 0.25);
+      overflow: hidden;
+    }
+
+    .mock-header {
+      background-color: var(--blue);
+      height: 92px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 24px;
+      color: #fff;
+      position: relative;
+      z-index: 20;
+    }
+
+    .mock-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+    }
+
+    .mock-logo {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: #084d75;
+      border: 3px solid #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      transform: translateY(22px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+      z-index: 30;
+      user-select: none;
+    }
+
+    .mock-logo span:last-child {
+      font-size: 9px;
+      font-weight: 400;
+      opacity: 0.85;
+    }
+
+    .mock-title strong {
+      font-size: 22px;
+      display: block;
+      line-height: 1.1;
+    }
+
+    .mock-title small {
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      color: #d1e7ff;
+    }
+
+    .mock-nav {
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    .mock-btn {
+      background: #fff;
+      color: var(--orange);
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .wave-wrapper {
+      position: relative;
+      width: 100%;
+      height: 140px;
+      margin-top: -1px;
+      z-index: 10;
+    }
+
+    .wave-wrapper svg.wave-svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Overlay interativo com pontos de controle sobre a onda */
+    .handles-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 25;
+      pointer-events: none;
+    }
+
+    .handles-overlay.hidden {
+      display: none;
+    }
+
+    .handle-point {
+      pointer-events: all;
+      cursor: grab;
+    }
+
+    .handle-point:active {
+      cursor: grabbing;
+    }
+
+    .mock-hero {
+      padding: 18px 8% 36px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .mock-hero h2 {
+      font-size: clamp(22px, 3vw, 34px);
+      color: #26231e;
+      margin-bottom: 6px;
+    }
+
+    .mock-hero p {
+      font-size: 14px;
+      color: #5c564c;
+    }
+
+    /* --- PAINEL DE CONTROLE --- */
+    .editor-panel {
+      max-width: 1280px;
+      margin: 24px auto 48px;
+      padding: 0 20px;
+    }
+
+    .panel-box {
+      background: var(--panel-bg);
+      color: var(--text-main);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
+    }
+
+    .panel-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .panel-header h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .panel-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      background: var(--panel-card);
+      color: var(--text-main);
+      border: 1px solid var(--panel-border);
+      padding: 8px 13px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    button:hover {
+      border-color: #56688a;
+      background: #252e40;
+    }
+
+    button.primary {
+      background: var(--blue);
+      border-color: #1685c2;
+      color: #fff;
+    }
+
+    button.primary:hover {
+      background: #087bb8;
+    }
+
+    button.active {
+      border-color: var(--orange);
+      color: #ffb074;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .control-card {
+      background: var(--panel-card);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .control-card label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .control-card label strong {
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #2997d4;
+      cursor: pointer;
+    }
+
+    .code-section {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: start;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 138px;
+      background: #0e121a;
+      color: #a7f3d0;
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px;
+      line-height: 1.5;
+      resize: vertical;
+    }
+
+    .copy-feedback {
+      font-size: 12px;
+      color: #34d399;
+      margin-top: 6px;
+      text-align: center;
+      min-height: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ÁREA DE PREVIEW -->
+  <section class="preview-stage">
+    <header class="mock-header">
+      <div class="mock-brand">
+        <div class="mock-logo" title="Simulação da logo sobre a onda">
+          <span>DUCKLÉ</span>
+          <span>LOGO</span>
+        </div>
+        <div class="mock-title">
+          <strong>Ducklé</strong>
+          <small>PÂTISSERIE FINE</small>
+        </div>
+      </div>
+
+      <nav class="mock-nav">
+        <span>Inicio</span>
+        <span>Sobre</span>
+        <span>Nosso trabalho</span>
+        <span>Contato</span>
+      </nav>
+
+      <div class="mock-btn">Fazer pedido</div>
+    </header>
+
+    <div class="wave-wrapper" id="waveWrapper">
+      <svg
+        id="waveSvg"
+        class="wave-svg"
+        viewBox="0 0 1440 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="none"
+      >
+        <path
+          id="wavePath"
+          d="M0,0 L1440,0 L1440,35 C1250,115 1050,120 820,85 C580,50 480,35 280,65 C150,85 60,80 0,65 Z"
+          fill="#006BA4"
+        />
+      </svg>
+
+      <!-- Pontos arrastáveis em tempo real -->
+      <svg
+        id="handlesSvg"
+        class="handles-overlay"
+        viewBox="0 0 1440 120"
+        preserveAspectRatio="none"
+      >
+        <g id="guidesGroup"></g>
+        <g id="handlesGroup"></g>
+      </svg>
+    </div>
+
+    <div class="mock-hero">
+      <p>Brownies, NY cookies e criações autoriais</p>
+      <h2>Do clássico ao autoral, feito para surpreender.</h2>
+    </div>
+  </section>
+
+  <!-- PAINEL DE CONTROLES -->
+  <section class="editor-panel">
+    <div class="panel-box">
+      <div class="panel-header">
+        <div>
+          <h1>Ajuste da Onda SVG em Tempo Real</h1>
+          <p>Arraste as bolinhas direto na curva ou use os controles abaixo. O código SVG atualiza na hora.</p>
+        </div>
+        <div class="toolbar">
+          <button id="toggleHandlesBtn" class="active">Pontos na tela: ON</button>
+          <button id="presetLogoLowBtn">Curva baixa na logo</button>
+          <button id="resetBtn">Resetar original</button>
+        </div>
+      </div>
+
+      <div class="controls-grid" id="slidersContainer"></div>
+
+      <div class="code-section">
+        <textarea id="svgOutput" spellcheck="false"></textarea>
+        <div>
+          <button id="copyBtn" class="primary">Copiar SVG</button>
+          <div class="copy-feedback" id="copyFeedback"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Valores originais extraídos do seu <path>:
+    // d="M0,0 L1440,0 L1440,35 C1250,115 1050,120 820,85 C580,50 480,35 280,65 C150,85 60,80 0,65 Z"
+    const INITIAL_STATE = {
+      rightEdgeY: 35,
+      // Curva 1 (direita -> centro): C c1x,c1y c2x,c2y p1x,p1y
+      c1x: 1250, c1y: 115,
+      c2x: 1050, c2y: 120,
+      p1x: 820,  p1y: 85,
+      // Curva 2 (centro -> esquerda/logo): C c3x,c3y c4x,c4y p2x,p2y
+      c3x: 580,  c3y: 50,
+      c4x: 480,  c4y: 35,
+      p2x: 280,  p2y: 65,
+      // Curva 3 (logo -> borda esquerda): C c5x,c5y c6x,c6y leftEdgeY
+      c5x: 150,  c5y: 85,
+      c6x: 60,   c6y: 80,
+      leftEdgeY: 65,
+      waveHeightPx: 140
+    };
+
+    const SLIDER_CONFIG = [
+      { key: "leftEdgeY", label: "Borda esquerda (logo)", min: 0, max: 120 },
+      { key: "c6y", label: "Alça esq. altura (C6 Y)", min: 0, max: 140 },
+      { key: "c5y", label: "Alça logo altura (C5 Y)", min: 0, max: 140 },
+      { key: "p2y", label: "Ponto meio-esq. (P2 Y)", min: 0, max: 120 },
+      { key: "c4y", label: "Crista centro-esq. (C4 Y)", min: 0, max: 120 },
+      { key: "c3y", label: "Alça centro (C3 Y)", min: 0, max: 120 },
+      { key: "p1y", label: "Ponto centro (P1 Y)", min: 0, max: 120 },
+      { key: "c2y", label: "Vale direita (C2 Y)", min: 0, max: 140 },
+      { key: "c1y", label: "Alça direita (C1 Y)", min: 0, max: 140 },
+      { key: "rightEdgeY", label: "Borda direita", min: 0, max: 120 },
+      { key: "waveHeightPx", label: "Altura visual da onda (px)", min: 50, max: 220 }
+    ];
+
+    let state = { ...INITIAL_STATE };
+    let activeDrag = null;
+
+    const wavePath = document.getElementById("wavePath");
+    const waveWrapper = document.getElementById("waveWrapper");
+    const guidesGroup = document.getElementById("guidesGroup");
+    const handlesGroup = document.getElementById("handlesGroup");
+    const handlesSvg = document.getElementById("handlesSvg");
+    const slidersContainer = document.getElementById("slidersContainer");
+    const svgOutput = document.getElementById("svgOutput");
+    const copyFeedback = document.getElementById("copyFeedback");
+
+    function buildPathD(s) {
+      return [
+        `M0,0`,
+        `L1440,0`,
+        `L1440,${Math.round(s.rightEdgeY)}`,
+        `C${Math.round(s.c1x)},${Math.round(s.c1y)} ${Math.round(s.c2x)},${Math.round(s.c2y)} ${Math.round(s.p1x)},${Math.round(s.p1y)}`,
+        `C${Math.round(s.c3x)},${Math.round(s.c3y)} ${Math.round(s.c4x)},${Math.round(s.c4y)} ${Math.round(s.p2x)},${Math.round(s.p2y)}`,
+        `C${Math.round(s.c5x)},${Math.round(s.c5y)} ${Math.round(s.c6x)},${Math.round(s.c6y)} 0,${Math.round(s.leftEdgeY)}`,
+        `Z`
+      ].join(" ");
+    }
+
+    function renderSliders() {
+      slidersContainer.innerHTML = "";
+      SLIDER_CONFIG.forEach((cfg) => {
+        const card = document.createElement("div");
+        card.className = "control-card";
+        card.innerHTML = `
+          <label for="input-${cfg.key}">
+            <span>${cfg.label}</span>
+            <strong id="val-${cfg.key}">${Math.round(state[cfg.key])}</strong>
+          </label>
+          <input
+            id="input-${cfg.key}"
+            type="range"
+            min="${cfg.min}"
+            max="${cfg.max}"
+            step="1"
+            value="${state[cfg.key]}"
+          />
+        `;
+        const input = card.querySelector("input");
+        input.addEventListener("input", (e) => {
+          state[cfg.key] = Number(e.target.value);
+          updateAll();
+        });
+        slidersContainer.appendChild(card);
+      });
+    }
+
+    function syncSliderValues() {
+      SLIDER_CONFIG.forEach((cfg) => {
+        const input = document.getElementById(`input-${cfg.key}`);
+        const label = document.getElementById(`val-${cfg.key}`);
+        if (input && label) {
+          input.value = Math.round(state[cfg.key]);
+          label.textContent = Math.round(state[cfg.key]);
+        }
+      });
+    }
+
+    function renderHandles() {
+      guidesGroup.innerHTML = "";
+      handlesGroup.innerHTML = "";
+
+      const nodes = [
+        { id: "rightEdge", x: 1440, y: state.rightEdgeY, type: "anchor", keys: { y: "rightEdgeY" }, title: "Borda direita" },
+        { id: "c1", x: state.c1x, y: state.c1y, type: "control", keys: { x: "c1x", y: "c1y" }, title: "Controle C1" },
+        { id: "c2", x: state.c2x, y: state.c2y, type: "control", keys: { x: "c2x", y: "c2y" }, title: "Controle C2" },
+        { id: "p1", x: state.p1x, y: state.p1y, type: "anchor", keys: { x: "p1x", y: "p1y" }, title: "Ponto P1" },
+        { id: "c3", x: state.c3x, y: state.c3y, type: "control", keys: { x: "c3x", y: "c3y" }, title: "Controle C3" },
+        { id: "c4", x: state.c4x, y: state.c4y, type: "control", keys: { x: "c4x", y: "c4y" }, title: "Controle C4" },
+        { id: "p2", x: state.p2x, y: state.p2y, type: "anchor", keys: { x: "p2x", y: "p2y" }, title: "Ponto P2" },
+        { id: "c5", x: state.c5x, y: state.c5y, type: "control", keys: { x: "c5x", y: "c5y" }, title: "Controle C5" },
+        { id: "c6", x: state.c6x, y: state.c6y, type: "control", keys: { x: "c6x", y: "c6y" }, title: "Controle C6" },
+        { id: "leftEdge", x: 0, y: state.leftEdgeY, type: "anchor", keys: { y: "leftEdgeY" }, title: "Borda esquerda (logo)" }
+      ];
+
+      const lines = [
+        [1440, state.rightEdgeY, state.c1x, state.c1y],
+        [state.p1x, state.p1y, state.c2x, state.c2y],
+        [state.p1x, state.p1y, state.c3x, state.c3y],
+        [state.p2x, state.p2y, state.c4x, state.c4y],
+        [state.p2x, state.p2y, state.c5x, state.c5y],
+        [0, state.leftEdgeY, state.c6x, state.c6y]
+      ];
+
+      lines.forEach(([x1, y1, x2, y2]) => {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", x1);
+        line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+        line.setAttribute("stroke", "#ff9e44");
+        line.setAttribute("stroke-width", "1.5");
+        line.setAttribute("stroke-dasharray", "4 4");
+        guidesGroup.appendChild(line);
+      });
+
+      nodes.forEach((n) => {
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", n.x);
+        circle.setAttribute("cy", n.y);
+        circle.setAttribute("r", n.type === "anchor" ? "8" : "6.5");
+        circle.setAttribute("fill", n.type === "anchor" ? "#ffffff" : "#ff8524");
+        circle.setAttribute("stroke", "#141923");
+        circle.setAttribute("stroke-width", "2.5");
+        circle.classList.add("handle-point");
+
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        title.textContent = `${n.title} (${Math.round(n.x)}, ${Math.round(n.y)})`;
+        circle.appendChild(title);
+
+        circle.addEventListener("pointerdown", (e) => {
+          e.preventDefault();
+          circle.setPointerCapture(e.pointerId);
+          activeDrag = n;
+        });
+
+        circle.addEventListener("pointermove", (e) => {
+          if (!activeDrag || activeDrag.id !== n.id) return;
+          const rect = handlesSvg.getBoundingClientRect();
+          const relX = ((e.clientX - rect.left) / rect.width) * 1440;
+          const relY = ((e.clientY - rect.top) / rect.height) * 120;
+
+          if (n.keys.x) {
+            state[n.keys.x] = Math.max(0, Math.min(1440, relX));
+          }
+          if (n.keys.y) {
+            state[n.keys.y] = Math.max(0, Math.min(130, relY));
+          }
+          updateAll();
+        });
+
+        circle.addEventListener("pointerup", () => {
+          activeDrag = null;
+        });
+
+        handlesGroup.appendChild(circle);
+      });
+    }
+
+    function updateCodeOutput() {
+      const d = buildPathD(state);
+      svgOutput.value = `<svg
+  viewBox="0 0 1440 120"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  preserveAspectRatio="none"
+>
+  <path
+    d="${d}"
+    fill="#006BA4"
+  />
+</svg>`;
+    }
+
+    function updateAll() {
+      waveWrapper.style.height = `${state.waveHeightPx}px`;
+      wavePath.setAttribute("d", buildPathD(state));
+      renderHandles();
+      syncSliderValues();
+      updateCodeOutput();
+    }
+
+    // Permite colar/editar o código SVG manualmente também
+    svgOutput.addEventListener("input", () => {
+      const match = svgOutput.value.match(
+        /d="M0,0\s+L1440,0\s+L1440,([-\d.]+)\s+C([-\d.]+),([-\d.]+)\s+([-\d.]+),([-\d.]+)\s+([-\d.]+),([-\d.]+)\s+C([-\d.]+),([-\d.]+)\s+([-\d.]+),([-\d.]+)\s+([-\d.]+),([-\d.]+)\s+C([-\d.]+),([-\d.]+)\s+([-\d.]+),([-\d.]+)\s+0,([-\d.]+)\s+Z"/i
+      );
+      if (!match) return;
+      const [, rightEdgeY, c1x, c1y, c2x, c2y, p1x, p1y, c3x, c3y, c4x, c4y, p2x, p2y, c5x, c5y, c6x, c6y, leftEdgeY] = match.map(Number);
+      state = { ...state, rightEdgeY, c1x, c1y, c2x, c2y, p1x, p1y, c3x, c3y, c4x, c4y, p2x, p2y, c5x, c5y, c6x, c6y, leftEdgeY };
+      waveWrapper.style.height = `${state.waveHeightPx}px`;
+      wavePath.setAttribute("d", buildPathD(state));
+      renderHandles();
+      syncSliderValues();
+    });
+
+    document.getElementById("toggleHandlesBtn").addEventListener("click", (e) => {
+      const btn = e.currentTarget;
+      const isHidden = handlesSvg.classList.toggle("hidden");
+      btn.textContent = `Pontos na tela: ${isHidden ? "OFF" : "ON"}`;
+      btn.classList.toggle("active", !isHidden);
+    });
+
+    document.getElementById("presetLogoLowBtn").addEventListener("click", () => {
+      state = {
+        ...state,
+        leftEdgeY: 98,
+        c6y: 108,
+        c5y: 102,
+        p2y: 72,
+        c4y: 34,
+        c3y: 48,
+        p1y: 78
+      };
+      updateAll();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      state = { ...INITIAL_STATE };
+      updateAll();
+    });
+
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(svgOutput.value);
+        copyFeedback.textContent = "Copiado!";
+      } catch {
+        svgOutput.select();
+        document.execCommand("copy");
+        copyFeedback.textContent = "Copiado!";
+      }
+      setTimeout(() => {
+        copyFeedback.textContent = "";
+      }, 1800);
+    });
+
+    renderSliders();
+    updateAll();
+  </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+    
+}
+
+:root {
+    --blue: #006BA4;
+    --cream: #F8F3EA;
+    --brown: #32302B;
+    --orange: #E07020;
+    --white: #FFFFFF;
+}
+
+body {
+    background-color: #FEF9F0;
+    font-family: "Inter", sans-serif;
+
+}   
+
+html, body {
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Edge antigo */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge e Opera */
+}
+
+.container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+}
+
+
+/*Header*/
+
+header {
+    background-color: var(--blue);
+    height: 100px;
+    position: relative;
+    z-index: 20; /* Mantém o header e seus filhos acima da onda */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100px;
+    color: var(--white);
+    margin: 0px;
+}
+
+header .container {
+
+
+}
+
+.header-wave {
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    background-color: var(--cream); /* Mesma cor do .hero para não dar emenda */
+    margin-top: -1px; /* Evita linha sub-pixel entre o header e o SVG */
+    position: relative;
+    z-index: 10; /* Fica abaixo do header (onde está a logo) */
+}
+
+.header-wave svg {
+    display: block;
+    width: 100%; /* Removido o min-width: 1980px para a curva não sair do lugar */
+    height: 85px;
+}
+
+.logo-title {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+}
+
+/* Reserva o espaço horizontal da logo no flex para não sobrepor o texto "Ducklé" */
+.logo {
+    width: 115px; 
+    height: 100px;
+    position: relative;
+}
+
+.logo img {
+    width: 115px; /* Tamanho proporcional ao círculo da referência */
+    height: auto;
+    position: absolute;
+    top: 15px; /* Faz a logo descer e repousar sobre a barriga da onda */
+    left: 0;
+    z-index: 30; /* Garante que a logo fique na frente de tudo */
+}
+
+.title h1 {
+    font-family: 'Newsreader', sans-serif;
+}
+
+.title p {
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 1.1px;
+    color: #D1E7FF;
+}
+
+.nav-links  {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+}
+
+.nav-links a {
+    color: var(--white);
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    border-bottom: 2px solid var(--orange);
+    transition: 0.3s ease;
+
+}
+
+.btn-pedido {
+    display: flex;
+    background-color: var(--white);
+    color: var(--orange);
+    padding: 12px 24px;
+    border-radius: 30px;
+    text-decoration: none;
+    align-items: center;
+    text-align: center;
+
+}
+
+
+.btn-pedido:hover {
+    background-color: var(--orange);
+    color: var(--white);
+    transition: 0.3s ease;
+
+}
+
+.btn-pedido img {
+    width: 24px;
+    height: 30px;
+    margin-right: 8px;
+
+}
+
+.btn-pedido:hover img {    
+    transition: 0.4s ease;
+    background-color: var(--orange);
+
+}
+
+
+
+/*Header*/
+
+.hero {
+
+    background-color: var(--cream);
+
+}
+
+.about {
+    
+
+
+}
+
+.phrase {
+    background-color: var(--brown);
+
+
+}
+
+.signature-image img {
+    width: 69px;
+
+
+}
+
+.gallery {
+
+
+}
+
+footer {
+    background-color: var(--blue);
+
+
+}
+
+.footer-logo img {
+    width: 77px;
+}
+
+.footer-links img {
+    width: 24px;
+
+}
