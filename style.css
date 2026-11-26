@@ -1,0 +1,316 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+    
+}
+
+:root {
+    --blue: #006BA4;
+    --cream: #F8F3EA;
+    --brown: #32302B;
+    --orange: #E07020;
+    --white: #FFFFFF;
+}
+
+body {
+    background-color: #FEF9F0;
+    font-family: "Inter", sans-serif;
+
+}   
+
+html, body {
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Edge antigo */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge e Opera */
+}
+
+.container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+}
+
+
+/*Header*/
+
+header {
+    background-color: var(--blue);
+    height: 100px;
+    position: relative;
+    z-index: 20; /* Mantém o header e seus filhos acima da onda */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100px;
+    color: var(--white);
+    margin: 0px;
+}
+
+header .container {
+
+
+}
+
+.header-wave {
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    background-color: var(--cream); /* Mesma cor do .hero para não dar emenda */
+    margin-top: -1px; /* Evita linha sub-pixel entre o header e o SVG */
+    position: relative;
+    z-index: 10; /* Fica abaixo do header (onde está a logo) */
+}
+
+.header-wave svg {
+    display: block;
+    width: 100%; /* Removido o min-width: 1980px para a curva não sair do lugar */
+    height: 85px;
+}
+
+.logo-title {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+}
+
+/* Reserva o espaço horizontal da logo no flex para não sobrepor o texto "Ducklé" */
+.logo {
+    width: 115px; 
+    height: 100px;
+    position: relative;
+}
+
+.logo img {
+    width: 115px; /* Tamanho proporcional ao círculo da referência */
+    height: auto;
+    position: absolute;
+    top: 15px; /* Faz a logo descer e repousar sobre a barriga da onda */
+    left: 0;
+    z-index: 30; /* Garante que a logo fique na frente de tudo */
+}
+
+.title h1 {
+    font-family: 'Newsreader', sans-serif;
+}
+
+.title p {
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 1.1px;
+    color: #D1E7FF;
+}
+
+.nav-links  {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+}
+
+.nav-links a {
+    color: var(--white);
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    border-bottom: 2px solid var(--orange);
+    transition: 0.3s ease;
+
+}
+
+.btn-pedido {
+    display: flex;
+    background-color: var(--white);
+    color: var(--orange);
+    padding: 12px 24px;
+    border-radius: 30px;
+    text-decoration: none;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.08);
+
+}
+
+
+.btn-pedido:hover {
+    background-color: var(--orange);
+    color: var(--white);
+    transition: 0.3s ease;
+
+}
+
+.btn-pedido img {
+    width: 24px;
+    height: 30px;
+    margin-right: 8px;
+    transition: filter 0.3s ease;
+
+}
+
+.btn-pedido:hover img {    
+    filter: brightness(0) invert(1);
+
+}
+
+
+
+/*Header*/
+
+
+/*Hero*/
+
+.hero {
+
+    background-color: var(--cream);
+
+}
+
+.hero .container {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 20px;
+    align-items: center;
+    padding: 100px 0;
+
+}
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 700px;
+    gap: 10px;
+
+}
+
+.hero-content p {
+    font-family: 'Inter', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.55);
+
+}
+
+.hero-content h1 {
+    font-weight: bold;
+    font-size: 75px;
+    text-align: center;
+    margin-bottom: 40px;
+
+}
+
+.btn-hero {
+    display: flex;
+    align-items: center;
+    margin-bottom: 50px;
+    background-color: var(--orange);
+    color: var(--white);
+    padding: 12px 24px;
+    border-radius: 30px;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
+    font-size: 18px;
+    transition: transform 0.05s ease;
+
+}
+
+.btn-hero:hover{
+    transform: scale(0.97);
+}
+
+.qualitys {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    justify-content: center;
+}
+
+.quality-items {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+}
+
+.quality-items img {
+    width: 15,60px;
+    height: 15px;
+}
+
+.quality-items p  {
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+
+}
+
+
+
+.hero-image {
+    background-color: white;
+    padding: 18px;
+    border-radius: 30px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    aspect-ratio: 1 / 1;
+    width: 500px;
+}
+
+.hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 22px;
+    display: block;
+}
+
+/*Hero*/
+
+.about {
+    
+
+
+}
+
+.phrase {
+    background-color: var(--brown);
+
+
+}
+
+.signature-image img {
+    width: 69px;
+
+
+}
+
+.gallery {
+
+
+}
+
+footer {
+    background-color: var(--blue);
+
+
+}
+
+.footer-logo img {
+    width: 77px;
+}
+
+.footer-links img {
+    width: 24px;
+
+}
