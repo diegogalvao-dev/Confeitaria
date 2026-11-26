@@ -25,47 +25,45 @@
     />
   </head>
   <body>
-<header>
+    <header>
+      <div class="logo-title">
+        <div class="logo">
+          <img src="Imagens/logo.png" alt="Duckle Logo" />
+        </div>
 
-    <div class="logo-title">
-      <div class="logo">
-        <img src="Imagens/logo.png" alt="Duckle Logo" />
+        <div class="title">
+          <h1>Ducklé</h1>
+          <p>PÂTISSERIE FINE</p>
+        </div>
       </div>
 
-      <div class="title">
-        <h1>Ducklé</h1>
-        <p>PÂTISSERIE FINE</p>
-      </div>
+      <nav class="navbar">
+        <ul class="nav-links">
+          <li><a href="#home">Inicio</a></li>
+          <li><a href="#about">Sobre</a></li>
+          <li><a href="#works">Nosso trabalho</a></li>
+          <li><a href="#contact">Contato</a></li>
+        </ul>
+      </nav>
+
+      <a href="link whatzapp" class="btn-pedido">
+        <img src="Imagens/bag-shopping-solid-full.svg" alt="bag" /> Fazer pedido
+      </a>
+    </header>
+
+    <div class="header-wave">
+      <svg
+        viewBox="0 0 1440 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M0,0 L1440,0 L1440,19 C1230,88 1063,93 895,57 C600,2 492,31 280,65 C150,85 60,80 0,53 Z"
+          fill="#006BA4"
+        />
+      </svg>
     </div>
-
-    <nav class="navbar">
-      <ul class="nav-links">
-        <li><a href="#home">Inicio</a></li>
-        <li><a href="#about">Sobre</a></li>
-        <li><a href="#works">Nosso trabalho</a></li>
-        <li><a href="#contact">Contato</a></li>
-      </ul>
-    </nav>
-
-    <a href="link whatzapp" class="btn-pedido">
-      <img src="Imagens/bag-shopping-solid-full.svg" alt="bag" /> Fazer pedido
-    </a>
- 
-</header>
-
-<div class="header-wave">
-<svg
-  viewBox="0 0 1440 120"
-  fill="none"
-  xmlns="http://www.w3.org/2000/svg"
-  preserveAspectRatio="none"
->
-  <path
-    d="M0,0 L1440,0 L1440,19 C1230,88 1063,93 895,57 C600,2 492,31 280,65 C150,85 60,80 0,53 Z"
-    fill="#006BA4"
-  />
-</svg>
-</div>
 
     <main>
       <section class="hero" id="home">
@@ -73,9 +71,22 @@
           <div class="hero-content">
             <p>Brownies, NY cookies e criações autoriais</p>
             <h1>Do clássico ao autoral, feito para surpreender.</h1>
-            <a href="#" class="btn">Conheça nossas criações</a>
+            <a href="#" class="btn-hero">Conheça nossas criações</a>
 
-            <div class="qualitys"></div>
+            <div class="qualitys">
+              <div class="quality-items">
+                <img src="Imagens/verificado.png" alt="Quality 1" />
+                <p>INGREDIENTES SELECIONADOS</p>
+              </div>
+              <div class="quality-items">
+                <img src="Imagens/clock.png" alt="Quality 2" />
+                <p>PRODUÇÃO ARTESANAL</p>
+              </div>
+              <div class="quality-items">
+                <img src="Imagens/shop.png" alt="Quality 3" />
+                <p>B2B & SOB ENCOMENDA</p>
+              </div>
+            </div>
           </div>
 
           <div class="hero-image">
